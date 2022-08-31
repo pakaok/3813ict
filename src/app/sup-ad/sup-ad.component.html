@@ -16,10 +16,10 @@
             <div class="border-end bg-white" id="sidebar-wrapper">
                 <div class="sidebar-heading border-bottom bg-light">Start Bootstrap</div>
                 <div class="list-group list-group-flush">
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Super Administration</a>
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Group Administration</a>
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Group Administration2</a>
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Chat</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" (click)="chan(4)">Super Administration</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" (click)="chan(3)">Group Administration</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" (click)="chan(2)">Group Administration2</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" (click)="chan(1)">Chat</a>
                 </div>
             </div>
             <!-- Page content wrapper-->
@@ -37,30 +37,144 @@
                     </div>
                 </nav>
                 <!-- Page content-->
-                <div class="container-fluid" [ngSwitch]="color">
-                    <div *ngSwitchCase = "1">
-                        <h2>Super Admin Page</h2>
+                <div class="container-fluid" [ngSwitch]="state">
+                    <div *ngSwitchCase = "4">
+                        <h2>Super Admin Page</h2><br>
                         <label for="A_gr">User</label> : 
                         <select name="A_gr" >
                             <option value="none">=Choose User=</option>
                             <option *ngFor="let user of user_list" value=user>{{user}}</option>
-                            
-                          </select><br>
-                          <div class="dropdown">
-                            <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
-                            <span class="caret"></span></button>
-                            <ul class="dropdown-menu">
-                              <li><a href="#">HTML</a></li>
-                              <li><a href="#">CSS</a></li>
-                              <li><a href="#">JavaScript</a></li>
-                            </ul>
-                          </div>
-                          <!-- <button type="button" class="btn btn-primary">Assign to Super Admin</button>
+                          </select><br><br>
+                          <div class="btn-group" role="group" aria-label="Basic example">
+                          <button type="button" class="btn btn-primary">Assign to Super Admin</button>
                           <button type="button" class="btn btn-success">Assign to Group Admin</button>
-                          <button type="button" class="btn btn-danger">Remove User</button> -->
-                        </div>
-                        
+                          <button type="button" class="btn btn-danger">Remove User</button>
+                        </div></div>
+                    <div  *ngSwitchCase = "3">
+                        <h2>Group Admin Page</h2><br><br>
+                        <label for="C_g">Create Group</label> : 
+                        <input type="text" name="C_g" placeholder="Group name">&nbsp;
+                        <button type="button" class="btn btn-primary">Create</button>
+                        <br><br>
+                        <label for="C_c">Create Channel</label> : 
+                        <input type="text" name="C_c" placeholder="Channel name">&nbsp; in &nbsp;
+                        <select>
+                            <option value="none">=Group=</option>
+                            <option *ngFor="let group of group_list" value="group">{{group}}</option>
+                        </select>&nbsp;
+                        <button type="button" class="btn btn-primary">Create</button>
+            
+                        <!-- <button type="button" class="btn btn-primary">Create</button><br>
+                        <label for="C_u">Create User</label> : 
+                        <input type="text" name="C_u" placeholder="User name">&nbsp;
+                        <button type="button" class="btn btn-primary">Create</button>
+                        <br><br> -->
+                        <br><br>
+
+                        <label for="I_u">User Invitation</label> : 
+                        <input type="text" name="C_u" placeholder="User name">&nbsp;
+                        <select>
+                            <option value="none">=User=</option>
+                            <option *ngFor="let user of user_list" value="user">{{user}}</option>
+                        </select>&nbsp; to &nbsp;
+                        <select>
+                            <option value="none">=Channel=</option>
+                            <option *ngFor="let ch of channel_list" value="ch">{{ch}}</option>
+                        </select>&nbsp; of &nbsp;
+                        <select>
+                            <option value="none">=Group=</option>
+                            <option *ngFor="let group of group_list" value="group">{{group}}</option>
+                        </select> &nbsp;
+                        <button type="button" class="btn btn-primary">Invite or Create</button>
+                        <br><br>
+
+                        <label for="Control_u">User Remove from Channel</label> : 
+                        <select>
+                            <option value="none">=User=</option>
+                            <option *ngFor="let user of user_list" value="user">{{user}}</option>
+                        </select>&nbsp; from &nbsp;
+                        <select>
+                            <option value="none">=Channel=</option>
+                            <option *ngFor="let ch of channel_list" value="ch">{{ch}}</option>
+                        </select>&nbsp; of &nbsp;
+                        <select>
+                            <option value="none">=Group=</option>
+                            <option *ngFor="let group of group_list" value="group">{{group}}</option>
+                        </select> &nbsp;
+                        <button type="button" class="btn btn-danger">Remove from Channel</button>
+                        <br><br>
+
+                        <label for="Control_g">Group&Channel Remove</label> : 
+                        <select>
+                            <option value="none">=Channel=</option>
+                            <option *ngFor="let ch of channel_list" value="ch">{{ch}}</option>
+                        </select>&nbsp; of &nbsp;
+                        <select>
+                            <option value="none">=Group=</option>
+                            <option *ngFor="let group of group_list" value="group">{{group}}</option>
+                        </select> &nbsp;
+                        <div class="btn-group" role="group" aria-label="Basic">
+                        <button type="button" class="btn btn-danger">Remove Channel</button>
+                        <button type="button" class="btn btn-primary">Remove Group</button>
+                        </div><br><br>
+
+                        <label for="A_assis">Group Assis Control</label> : 
+                        <select>
+                            <option value="none">=User=</option>
+                            <option *ngFor="let user of user_list" value="user">{{user}}</option>
+                        </select>&nbsp; in &nbsp;
+                        <select>
+                            <option value="none">=Group=</option>
+                            <option *ngFor="let group of group_list" value="group">{{group}}</option>
+                        </select> &nbsp;
+                        <button type="button" class="btn btn-primary">Assign to Group Assis</button>
+
+                       
+                    </div>
+                    <div  *ngSwitchCase = "2">
+                        <label for="Assis-1">User Add to Channel</label> : 
+                        <select>
+                            <option value="none">=User=</option>
+                            <option *ngFor="let user of user_list" value="user">{{user}}</option>
+                        </select>&nbsp; to &nbsp;
+                        <select>
+                            <option value="none">=Channel=</option>
+                            <option *ngFor="let ch of channel_list" value="ch">{{ch}}</option>
+                        </select>&nbsp; of &nbsp;
+                        <select>
+                            <option value="none">=Group=</option>
+                            <option *ngFor="let group of group_list" value="group">{{group}}</option>
+                        </select> &nbsp;
+                        <button type="button" class="btn btn-primary">Add</button>
+                        <br><br>
+
+                        <label for="Assis-2">User Remove from Channel</label> : 
+                        <select>
+                            <option value="none">=User=</option>
+                            <option *ngFor="let user of user_list" value="user">{{user}}</option>
+                        </select>&nbsp; to &nbsp;
+                        <select>
+                            <option value="none">=Channel=</option>
+                            <option *ngFor="let ch of channel_list" value="ch">{{ch}}</option>
+                        </select>&nbsp; of &nbsp;
+                        <select>
+                            <option value="none">=Group=</option>
+                            <option *ngFor="let group of group_list" value="group">{{group}}</option>
+                        </select> &nbsp;
+                        <button type="button" class="btn btn-primary">Remove</button>
+                        <br><br>
+
+                        <label for="Assis-3">Create Channel</label> : 
+                        <input type="text" name="C_c" placeholder="Channel name">&nbsp; in &nbsp;
+                        <select>
+                            <option value="none">=Group=</option>
+                            <option *ngFor="let group of group_list" value="group">{{group}}</option>
+                        </select>&nbsp;
+                        <button type="button" class="btn btn-primary">Create</button>
+                    </div>
                 </div>
+
+                
             </div>
         </div>
         <!-- Bootstrap core JS-->
