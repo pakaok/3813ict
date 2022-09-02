@@ -16,10 +16,10 @@
             <div class="border-end bg-white" id="sidebar-wrapper">
                 <div class="sidebar-heading border-bottom bg-light">Start Bootstrap</div>
                 <div class="list-group list-group-flush">
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" (click)="chan(4)">Super Administration</a>
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" (click)="chan(3)">Group Administration</a>
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" (click)="chan(2)">Group Administration2</a>
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" (click)="chan(1)">Chat</a>
+                    <a *ngIf="user_level==4" class="list-group-item list-group-item-action list-group-item-light p-3" (click)="state=4">Super Administration</a>
+                    <a *ngIf="user_level>=3" class="list-group-item list-group-item-action list-group-item-light p-3" (click)="state=3">Group Administration</a>
+                    <a *ngIf="user_level>=2"class="list-group-item list-group-item-action list-group-item-light p-3" (click)="state=2">Group Administration2</a>
+                    <a *ngIf="user_level>=1" class="list-group-item list-group-item-action list-group-item-light p-3" (click)="state=1">Chat</a>
                 </div>
             </div>
             <!-- Page content wrapper-->
@@ -27,11 +27,15 @@
                 <!-- Top navigation-->
                 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
                     <div class="container-fluid">
-                        <button class="btn btn-primary" id="sidebarToggle">Toggle Menu</button>
+                        <button class="btn btn-primary" id="sidebarToggle" (click)="chan(4)">4 Menu</button>
+                        <button class="btn btn-primary" id="sidebarToggle" (click)="chan(3)">3 Menu</button>
+                        <button class="btn btn-primary" id="sidebarToggle" (click)="chan(2)">2 Menu</button>
+                        <button class="btn btn-primary" id="sidebarToggle" (click)="chan(1)">1 Menu</button>
+                        <button class="btn btn-primary" id="sidebarToggle" (click)="inn()">0 Menu</button>
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-                                <li class="nav-item active"><a class="nav-link" href="#!">Home</a></li>
+                                <li class="nav-item active"><a class="nav-link" >Home</a></li>
                             </ul>
                         </div>
                     </div>

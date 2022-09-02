@@ -4,6 +4,8 @@ var cors = require('cors')
 var fs = require('fs')
 var http = require('http').Server(app)
 var bodyParser = require('body-parser')
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
 
 const io = require('socket.io')(http,{
     cors: {
@@ -19,13 +21,11 @@ http.listen(3000,()=>{
     var m = d.getMinutes()
     console.log('Server has been started at : ' + n + ' : '+ m)
 })
-console.log(fs.readFileSync('./db.json','utf-8'))
-app.post('/db-rq',function(req,res){
-    if (!req.body){
-        return res.sendStatus(400)
-    }
-    one=fs.readFileSync('./db.json','utf-8')
-    res.send(one)
+app.get('/db/rq',function(req,res){
+
+    fs.readFile('./db.json','utf8',function(err,data){
+        res.send(data)
+    })
 
 })
 

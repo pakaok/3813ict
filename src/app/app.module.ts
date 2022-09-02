@@ -11,6 +11,7 @@ import { GroupAssisComponent } from './group-assis/group-assis.component';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ServiceService } from './server-service/service.service';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { ServiceService } from './server-service/service.service';
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    CommonModule
   ],
   providers: [ServiceService],
   bootstrap: [AppComponent]

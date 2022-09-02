@@ -16,9 +16,13 @@ export class ServiceService {
     this.httpclient.post(url+'/db-rq',x)
   }
 
-  dbRequest(){
-    this.httpclient.post(url+'/db-rq','',httpoptions).subscribe((db:any)=>{
-      return db
+  async dbRequest(){
+    let req
+     await  this.httpclient.get(url+'/db/rq').subscribe((db:any)=>{
+      if(db){
+        return db
+      }
     })
+    
   }
 }
