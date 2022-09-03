@@ -25,16 +25,16 @@ app.get('/db/rq',function(req,res){
 
     fs.readFile('./db.json','utf8',function(err,data){
         res.send(data)
+        console.log('Data Sent')
     })
 
 })
 
-app.post('/db-rs',function(req,res){
-    if (!req.body){
-        return res.sendStatus(400)
-    }else{
-        fs.writeFileSync('./db.json',req.body)
-    }
+app.post('/db/rs',function(req,res){
+       
+       
+        fs.writeFileSync('./db.json',JSON.stringify(req.body))
+        console.log("Data received")
 
 
 })
