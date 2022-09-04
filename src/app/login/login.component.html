@@ -1,13 +1,24 @@
 <nav class="navbar navbar-default">
-    <div class="container-fluid">
-    <ul class="nav navbar-nav">
-    <li class="active"><a class="nav-link" routerLink="/supad">supa</a></li>
-    <li> <a class="nav-link" routerLink="/groupad">group admin</a></li>
-    <li><a class="nav-link" routerLink="/groupassis">Assis</a></li>
-    <li><a class="nav-link" routerLink="/users">user</a></li>
-    <li><button  routerLink="/">logout</button></li>
-    </ul>
+
+<form style="padding:10%;">
+    <!-- Email input -->
+    <h1>login</h1>
+    <div class="form-outline mb-4">
+      <input type="text" id="form2Example1" class="form-control" [(ngModel)]="user.id" name="s" />
+      <label class="form-label" for="form2Example1">Username</label>
     </div>
-   </nav>
-   
   
+    <!-- Password input -->
+    <div class="form-outline mb-4">
+      <input type="text" id="form2Example2" class="form-control" [(ngModel)]="user.pw" name="ss" />
+      <label class="form-label" for="form2Example2">Email</label>
+    </div>
+  
+    <!-- 2 column grid layout for inline styling -->
+    
+  
+    <!-- Submit button -->
+    <button type="button" class="btn btn-primary btn-block mb-4" (click)="login()">Sign in</button>
+  
+    
+  </form></nav>
