@@ -26,7 +26,6 @@ app.post('/login',function(req,res){
     let db = JSON.parse(fs.readFileSync('./db.json','utf8'))
     console.log(db)
     db.user.forEach(e => {
-        console.log(e)
         if(e[0]==req.body.id&&e[1]==req.body.pw){
             res.send({valid:true,id:e[0],level:e[3]})
         }

@@ -35,6 +35,7 @@ export class SupAdComponent implements OnInit {
   chat_title='Chat'
   ch_list:any=[[],[],[],[],[]]
   level=''
+  user_groupshow:any=['Group : Channel']
   constructor(private httpclient:HttpClient, private server:ServiceService) { }
   
   Assign_bysuper(x:number){
@@ -44,7 +45,8 @@ export class SupAdComponent implements OnInit {
           this.db.user[i][3]=x
           if(this.db.user[i][5]){this.db.user[i].splice(5,1)}
           if(this.db.user[i][4]){this.db.user[i].splice(4,1)}
-        }else{this.db.user.splice(i,1)}
+          alert('Assigned')
+        }else{this.db.user.splice(i,1);alert('User Removed')}
       }
     }
     this.inp.super='none'
@@ -56,6 +58,7 @@ export class SupAdComponent implements OnInit {
     if(this.db.grouplist.indexOf(this.inp.createGroup)==-1){
       this.db.grouplist.push(this.inp.createGroup)
       this.db.groups[this.inp.createGroup]=[]
+      alert('Group Created successfully')
     }else(alert('Already Exists'))
     console.log(this.db)
     this.dbSend()
@@ -64,6 +67,7 @@ export class SupAdComponent implements OnInit {
   createCh(group:string,channel:string){
     if(this.db.groups[group].indexOf(channel)==-1){
       this.db.groups[group].push(channel)
+      alert('Channel Created successfully')
     }else{alert('Already Exists')}
     console.log(this.db)
     this.dbSend()
@@ -137,13 +141,12 @@ export class SupAdComponent implements OnInit {
             this.db.user[i][5].splice(this.db.user[i][5].indexOf(this.inp.GC_rmv.g),1)
           }
         }
-      }
-      alert('Group Removed')
-      
+      }  
     }
     console.log(this.db)
     this.inp.GC_rmv.g='none'
     this.inp.GC_rmv.c='none'
+    alert('Group Removed')
     this.dbSend()
   }
 
@@ -152,7 +155,10 @@ export class SupAdComponent implements OnInit {
       if(this.db.user[i][0]==user){
         this.db.user[i][3]=2
         this.db.user[i][5].push(group)
+        if(Object.keys(this.db.user[i][4]).indexOf(group)==-1){this.db.user[i][4][group]=[]}
+        alert('Success')
       }
+      
     }
     this.user_init2(this.inp.groupA.g)
     console.log(this.db)
@@ -165,12 +171,12 @@ export class SupAdComponent implements OnInit {
         if(this.db.user[i][0]==user){
           this.db.user[i][4][group].push(channel)
         }
-      }
+      }alert('Added')
     }else if(x==2){
       for (let i = 0; i < this.db.user.length; i++) {
         if(this.db.user[i][0]==user){
           this.db.user[i][4][group].splice(this.db.user[i][4][group].indexOf(channel),1)
-        }
+        }alert('Removed')
       }
     }
     console.log(this.db)
@@ -225,23 +231,24 @@ export class SupAdComponent implements OnInit {
 
   async dbSend(){
     await this.httpclient.post(url+'/db/rs',this.db,httpoptions).subscribe()
+    this.group_showontop()
   }
 
-  async dbRequest(){
-    await this.httpclient.get(url+'/db/rq').subscribe((db:any)=>{
-      this.db=db
-      
-    })
-  }
+  
 
   logout(){
     localStorage.clear()
   }
   
   ngOnInit(): void {
-    this.dbRequest()
+    // this.dbRequest()
     this.user_level=localStorage.getItem('level')
     this.username=localStorage.getItem('id')
+    let x:any=localStorage.getItem('db')
+    this.db=JSON.parse(x)
+    
+   setTimeout(() => {
+    console.log(this.db)
     if(this.user_level==2){
       for (let i = 0; i < this.db.user.length; i++) {
         if (this.db.user[i][0]==this.username){
@@ -253,9 +260,45 @@ export class SupAdComponent implements OnInit {
     if(this.user_level==2){this.level='Group Assistant'}
     if(this.user_level==3){this.level='Group Admin'}
     if(this.user_level==4){this.level='Super Admin'}
-   setTimeout(() => {
-    console.log(this.db)
+    this.group_showontop()
    }, 500);
+
   }
   
+  group_showontop(){
+    this.user_groupshow=['Group : Channel']
+    if(this.user_level>=3){
+      let groupname=Object.keys(this.db.groups)
+      for (let i = 0; i < groupname.length; i++) {
+        this.user_groupshow.push(groupname[i]+' : '+
+        JSON.stringify(this.db.groups[groupname[i]]).replace('[','').replace(']','').replace(/"/g,''))
+      }      
+    }else if(this.user_level==2){
+      for (let i = 0; i < this.db.user.length; i++) {
+        if(this.username==this.db.user[i][0]){
+          let groups = Object.keys(this.db.user[i][4])
+          for (let i2 = 0; i2 < this.db.user[i][5].length; i2++) {
+            for (let i3 = 0; i3 < groups.length; i3++) {
+              if(this.db.user[i][5][i2].indexOf(groups[i3])!=-1){
+                this.user_groupshow.push(groups[i3]+' : Assistant')
+              }else{
+                this.user_groupshow.push(groups[i3]+' : '+this.db.user[i][4][groups[i3]])
+              }
+              
+            }
+          }
+        }        
+      }
+    }else if(this.user_level==1){
+      for (let i = 0; i < this.db.user.length; i++) {
+        if(this.db.user[i][0]==this.username){
+          let group = Object.keys(this.db.user[i][4])
+          for (let i2 = 0; i2 < group.length; i2++) {
+            this.user_groupshow.push(JSON.stringify(group[i2]+' : '+this.db.user[i][4][group[i2]]
+              ).replace('[','').replace(']','').replace(/"/g,''))
+          }
+        }
+      }
+    }
+  }
 }
