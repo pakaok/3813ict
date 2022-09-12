@@ -265,40 +265,57 @@ export class SupAdComponent implements OnInit {
 
   }
   
+  chat_group:any={}
+  chat_grouplist:any
+  chat_channel:any=[]
+  channel_show(x:string){
+    this.chat_channel=[]
+    this.chat_channel=this.chat_group[x]
+  }
   group_showontop(){
+    this.chat_group={}
     this.user_groupshow=['Group : Channel']
     if(this.user_level>=3){
       let groupname=Object.keys(this.db.groups)
+      groupname.forEach((x:any)=>{this.chat_group[x]=[]})
       for (let i = 0; i < groupname.length; i++) {
         this.user_groupshow.push(groupname[i]+' : '+
         JSON.stringify(this.db.groups[groupname[i]]).replace('[','').replace(']','').replace(/"/g,''))
+        this.chat_group[groupname[i]]=this.db.groups[groupname[i]]
       }      
-    }else if(this.user_level==2){
+    }else if(this.user_level<=2){
       for (let i = 0; i < this.db.user.length; i++) {
-        if(this.username==this.db.user[i][0]){
-          let groups = Object.keys(this.db.user[i][4])
-          for (let i2 = 0; i2 < this.db.user[i][5].length; i2++) {
-            for (let i3 = 0; i3 < groups.length; i3++) {
-              if(this.db.user[i][5][i2].indexOf(groups[i3])!=-1){
-                this.user_groupshow.push(groups[i3]+' : Assistant')
-              }else{
-                this.user_groupshow.push(groups[i3]+' : '+this.db.user[i][4][groups[i3]])
-              }
-              
-            }
-          }
-        }        
-      }
-    }else if(this.user_level==1){
-      for (let i = 0; i < this.db.user.length; i++) {
-        if(this.db.user[i][0]==this.username){
+        if (this.db.user[i][0]==this.username){
           let group = Object.keys(this.db.user[i][4])
+          group.forEach((x)=>{this.chat_group[x]=[]})
           for (let i2 = 0; i2 < group.length; i2++) {
-            this.user_groupshow.push(JSON.stringify(group[i2]+' : '+this.db.user[i][4][group[i2]]
-              ).replace('[','').replace(']','').replace(/"/g,''))
+            if(this.db.user[i][5].indexOf(group[i2])!=-1){
+              this.user_groupshow.push(group[i2]+' : Assistant')
+              this.chat_group[group[i2]].push(this.db.groups[group[i2]])
+            }else{
+              this.user_groupshow.push(group[i2]+' : '+JSON.stringify(this.db.user[i][4][group[i2]])
+              .replace('[','').replace(']','').replace(/"/g,''))
+              this.chat_group[group[i2]].push(this.db.user[i][4][group[i2]])
+            }
+            
           }
         }
+        
       }
     }
+    this.chat_grouplist=Object.keys(this.chat_group)
+    console.log(this.chat_grouplist)
   }
 }
+
+// else if(this.user_level==1){
+//   for (let i = 0; i < this.db.user.length; i++) {
+//     if(this.db.user[i][0]==this.username){
+//       let group = Object.keys(this.db.user[i][4])
+//       for (let i2 = 0; i2 < group.length; i2++) {
+//         this.user_groupshow.push(JSON.stringify(group[i2]+' : '+this.db.user[i][4][group[i2]]
+//           ).replace('[','').replace(']','').replace(/"/g,''))
+//       }
+//     }
+//   }
+// }

@@ -190,9 +190,11 @@
                     <h1>Welcome to {{chat_title}}</h1><br>
                     <select>
                         <option>=Channel=</option>
+                        <option *ngFor="let i of chat_channel">{{i}}</option>
                     </select>&nbsp;of &nbsp;
-                    <select>
-                        <option>=Group</option><br>
+                    <select #chatbox (click)="channel_show(chatbox.value)">
+                        <option value="">=Group</option><br>
+                        <option *ngFor="let i of chat_grouplist">{{i}}</option>
                     </select>&nbsp;
                     <button  type="button" class="btn btn-success">Join room</button><br>
                     <input type="text" style="width:40%" placeholder="M">

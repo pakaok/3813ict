@@ -1,1 +1,5 @@
-{"user":[["super","superemail","Super",4],["gadmin1","gademail","GroupAdmin",3],["user1","user1email","User",2,{"g1":["1"],"g2":["1"]},[]],["gassis1","gassisemail","GroupAssis",2,{"g1":["1"],"g2":[]},["g1"]]],"groups":{"g1":["1","2"],"g2":["1","2"]},"grouplist":["g1","g2"]}
+{"user":[["super","superemail","Super",4],["gadmin1","gademail","GroupAdmin",3],
+["user1","user1email","User",2,{"g1":["1"],"g2":["1"],"new":["new1"]},[]],
+["gassis1","gassisemail","GroupAssis",2,{"g1":["1"],"g2":["1"]},["g1"]],
+["test","test","test",3]],"groups":{"g1":["1","2"],"g2":["1","2"],"new":["new1"]}
+,"grouplist":["g1","g2","new"]}
