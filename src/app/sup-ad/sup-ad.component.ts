@@ -26,7 +26,8 @@ export class SupAdComponent implements OnInit {
     super:'none',
     createGroup:'',createChannel:{c:'',g:'none'},user_inv:{new:'',u:'none',g:'none',c:'none'},
     user_rmv:{u:'none',g:'none',c:'none'}, GC_rmv: {c:'none',g:'none'}, groupA:{u:'none',g:'none'},
-    assis_a:{u:'none',g:'none',c:'none'},assis_r:{u:'none',g:'none',c:'none'},assis_ch:''
+    assis_a:{u:'none',g:'none',c:'none'},assis_r:{u:'none',g:'none',c:'none'},assis_ch:'',
+    join_channel:'',join_group:''
   }
   state=1
   user_level:any=0
@@ -36,8 +37,22 @@ export class SupAdComponent implements OnInit {
   ch_list:any=[[],[],[],[],[]]
   level=''
   user_groupshow:any=['Group : Channel']
-  constructor(private httpclient:HttpClient, private server:ServiceService) { }
+  chat_group:any={}
+  chat_grouplist:any
+  chat_channel:any=[]
+  chat_msg:any=[]
+  constructor(private httpclient:HttpClient, private chats:ServiceService) { }
   
+  joinChat(){
+    this.chat_msg=[]
+    this.chats.joinRoom(this.inp.join_group+'/'+this.inp.join_channel)
+    this.chats.recieveMsg().subscribe((m)=>{this.chat_msg.push(m)})
+  }
+
+  sendMsg(){
+    this.chats.
+  }
+
   Assign_bysuper(x:number){
     for (let i = 0; i < this.db.user.length; i++) {
       if(this.db.user[i][0]==this.inp.super){
@@ -265,12 +280,11 @@ export class SupAdComponent implements OnInit {
 
   }
   
-  chat_group:any={}
-  chat_grouplist:any
-  chat_channel:any=[]
+
   channel_show(x:string){
     this.chat_channel=[]
     this.chat_channel=this.chat_group[x]
+
   }
   group_showontop(){
     this.chat_group={}

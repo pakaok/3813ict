@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import {HttpClient,HttpHeaders} from '@angular/common/http'
+import io from 'socket.io-client'
+import { observable, Observable, observeOn } from 'rxjs';
+
 const httpoptions={
   headers : new HttpHeaders({'Content-Type':'application/json'})
 }
@@ -9,20 +12,22 @@ const url='http://localhost:3000'
   providedIn: 'root'
 })
 export class ServiceService {
-
-  constructor(private httpclient:HttpClient) { }
+  socket:any
+  constructor(private httpclient:HttpClient ) {this.socket=io(url) }
   
-  dataSend(x:string){
-    this.httpclient.post(url+'/db-rq',x)
-  }
+  joinRoom(x:any){
+    this.socket.emit('join',x)
 
-  async dbRequest(){
-    let req
-     await  this.httpclient.get(url+'/db/rq').subscribe((db:any)=>{
-      if(db){
-        return db
-      }
-    })
-    
+  }
+ 
+  sendMsg(x:string){
+    this.socket.emit('msg',x)
+  }
+  recieveMsg(){
+    return new Observable((observer)=>{
+      this.socket.on('msg',(msg:any)=>{
+        observer.next(msg)
+      })
+    })  
   }
 }

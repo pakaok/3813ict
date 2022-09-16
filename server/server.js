@@ -22,6 +22,29 @@ http.listen(3000,()=>{
     console.log('Server has been started at : ' + n + ' : '+ m)
 })
 
+rooms=[['id','roomName']]
+
+io.on('connection',(socket)=>{
+    socket.on('join',(roomName)=>{
+        find=rooms.some((v)=>{return v[0]==socket.id&&v[1]==roomName})
+        if(!find){
+            rooms.push([socket.id,roomName])
+        }
+        socket.join(roomName)
+        console.log(rooms)
+    })
+
+    socket.on('msg',(msg)=>{
+        for (let i = 0; i < rooms.length; i++) {
+            if(rooms[i][0]==socket.id){
+                currentRoom=rooms[i][0]
+            }
+        }
+        console.log(rooms)
+        io.to(currentRoom).emit('msg',msg)
+    })
+})
+
 app.post('/login',function(req,res){
     let db = JSON.parse(fs.readFileSync('./db.json','utf8'))
     console.log(db)
@@ -73,13 +96,7 @@ app.post('/db/rs',function(req,res){
 //         })
 //         }
 
-// io.on('connection',(socket)=>{
-//     console.log('Connected on server.js'+',  '+socket.id)
 
-//     socket.on('msg',(msg)=>{
-//         io.emit('msg',msg)
-//     })
-// })
 
 // var server = http.listen(3000,function(){
 //     console.log('server listening')

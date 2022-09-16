@@ -188,11 +188,11 @@
                 </div>
                 <div  *ngSwitchCase = "1">
                     <h1>Welcome to {{chat_title}}</h1><br>
-                    <select>
-                        <option>=Channel=</option>
+                    <select [(ngModel)]="inp.join_channel">
+                        <option value="none">=Channel=</option>
                         <option *ngFor="let i of chat_channel">{{i}}</option>
                     </select>&nbsp;of &nbsp;
-                    <select #chatbox (click)="channel_show(chatbox.value)">
+                    <select [(ngModel)]="inp.join_group" #chatbox (click)="channel_show(chatbox.value)">
                         <option value="">=Group</option><br>
                         <option *ngFor="let i of chat_grouplist">{{i}}</option>
                     </select>&nbsp;
