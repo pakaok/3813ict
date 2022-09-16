@@ -27,6 +27,7 @@ rooms=[['id','roomName']]
 io.on('connection',(socket)=>{
     socket.on('join',(roomName)=>{
         find=rooms.some((v)=>{return v[0]==socket.id&&v[1]==roomName})
+        console.log('o')
         if(!find){
             rooms.push([socket.id,roomName])
         }
@@ -37,11 +38,35 @@ io.on('connection',(socket)=>{
     socket.on('msg',(msg)=>{
         for (let i = 0; i < rooms.length; i++) {
             if(rooms[i][0]==socket.id){
-                currentRoom=rooms[i][0]
+                currentRoom=rooms[i][1]
             }
         }
-        console.log(rooms)
         io.to(currentRoom).emit('msg',msg)
+
+    })
+
+    
+    socket.on('leave',(msg)=>{
+        for (let i = 0; i < rooms.length; i++) {
+            if(rooms[i][0]==socket.id){
+                leavingRoom = rooms[i][1]
+                socket.leave(leavingRoom)
+                rooms.splice(i, 1)
+                io.to(leavingRoom).emit('msg',msg+ ': left room')
+                console.log('leave'+msg)
+            }
+        }
+    })
+    socket.on('disconnect',(x)=>{
+        for (let i = 0; i < rooms.length; i++) {
+            if(rooms[i][0]==socket.id){
+                leavingRoom = rooms[i][1]
+                socket.leave(leavingRoom)
+                rooms.splice(i, 1)
+                io.to(leavingRoom).emit('msg',x+ ': left room')
+                console.log('leavedisconnect')
+            }
+        }
     })
 })
 

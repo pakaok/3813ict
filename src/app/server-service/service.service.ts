@@ -16,18 +16,33 @@ export class ServiceService {
   constructor(private httpclient:HttpClient ) {this.socket=io(url) }
   
   joinRoom(x:any){
+    this.socket.removeListener()
     this.socket.emit('join',x)
 
   }
  
   sendMsg(x:string){
     this.socket.emit('msg',x)
+
+  }
+  connectSocket(){
+    this.socket=io(url)
   }
   recieveMsg(){
-    return new Observable((observer)=>{
+    let observ= new Observable((observer)=>{
       this.socket.on('msg',(msg:any)=>{
         observer.next(msg)
       })
+      return ()=>{this.socket.disconnect()}
     })  
+    return observ
+  }
+  disconnectSocket(){
+    this.socket.disconnect()
+  }
+
+  leaveRoom(x:string){
+    this.socket.emit('leave',x)
+    
   }
 }

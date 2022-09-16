@@ -41,16 +41,26 @@ export class SupAdComponent implements OnInit {
   chat_grouplist:any
   chat_channel:any=[]
   chat_msg:any=[]
-  constructor(private httpclient:HttpClient, private chats:ServiceService) { }
-  
+  constructor(private httpclient:HttpClient, private chats:ServiceService) { this.chats=chats}
+  chat_observer:any
+  chat_state:boolean=false
   joinChat(){
     this.chat_msg=[]
-    this.chats.joinRoom(this.inp.join_group+'/'+this.inp.join_channel)
-    this.chats.recieveMsg().subscribe((m)=>{this.chat_msg.push(m)})
+
+   //  this.chats.leaveRoom(this.username)
+    this.chats.disconnectSocket()
+
+    this.chats.connectSocket()
+    if(this.inp.join_group!=''&&this.inp.join_channel!=''){
+      this.chats.joinRoom(this.inp.join_group+'/'+this.inp.join_channel)
+      this.chat_observer=this.chats.recieveMsg().subscribe((m)=>{this.chat_msg.push(m)})
+      console.log('joined in : '+this.inp.join_group+'/'+this.inp.join_channel)
+      this.chat_state=true
+    }
   }
 
-  sendMsg(){
-    this.chats.
+  sendMsg(x:string){
+    this.chats.sendMsg(x)
   }
 
   Assign_bysuper(x:number){
