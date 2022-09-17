@@ -4,6 +4,8 @@ var cors = require('cors')
 var fs = require('fs')
 var http = require('http').Server(app)
 var bodyParser = require('body-parser')
+var formidable = require('formidable')
+const { from } = require('rxjs')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
@@ -22,16 +24,17 @@ http.listen(3000,()=>{
     console.log('Server has been started at : ' + n + ' : '+ m)
 })
 
-rooms=[['id','roomName']]
+rooms=[['id','roomName','username']]
 
 io.on('connection',(socket)=>{
     socket.on('join',(roomName)=>{
-        find=rooms.some((v)=>{return v[0]==socket.id&&v[1]==roomName})
+        find=rooms.some((v)=>{return v[0]==socket.id&&v[1]==roomName[0]})
         console.log('o')
         if(!find){
-            rooms.push([socket.id,roomName])
+            rooms.push([socket.id,roomName[0],roomName[1]])
         }
-        socket.join(roomName)
+        socket.join(roomName[0])
+        io.to(roomName[0]).emit('msg','*** '+roomName[1]+': has joined ***')
         console.log(rooms)
     })
 
@@ -45,25 +48,14 @@ io.on('connection',(socket)=>{
 
     })
 
-    
-    socket.on('leave',(msg)=>{
-        for (let i = 0; i < rooms.length; i++) {
-            if(rooms[i][0]==socket.id){
-                leavingRoom = rooms[i][1]
-                socket.leave(leavingRoom)
-                rooms.splice(i, 1)
-                io.to(leavingRoom).emit('msg',msg+ ': left room')
-                console.log('leave'+msg)
-            }
-        }
-    })
     socket.on('disconnect',(x)=>{
         for (let i = 0; i < rooms.length; i++) {
             if(rooms[i][0]==socket.id){
                 leavingRoom = rooms[i][1]
+                username=rooms[i][2]
                 socket.leave(leavingRoom)
                 rooms.splice(i, 1)
-                io.to(leavingRoom).emit('msg',x+ ': left room')
+                io.to(leavingRoom).emit('msg','*** '+username+ ': left room ***')
                 console.log('leavedisconnect')
             }
         }
@@ -97,6 +89,35 @@ app.post('/db/rs',function(req,res){
 
 })
 
+app.post('/api/img',function(req,res){
+    var form = new formidable.IncomingForm({uploadDir:'./img'})
+    form.keepExtensions = true
+    console.log('apiimg connect')
+    form.on('error',function(err){
+        res.send({
+            result:'failed',
+            data:{},
+            numberOfImages:0,
+            message:"Cannot upload images. Error is : "+ err
+        })
+        throw err
+    })
+
+    form.on('fileBegin',(name,file)=>{
+        file.path = form.uploadDir+'/'+file.name
+    })
+    
+    form.on('file',(field,file)=>{
+        res.send({
+            result:'OK',
+            data:{'filename':file.name,'size':file.size},
+            numberOfImages:1,
+            message:'Upload successful'
+        })
+        console.log('image Sent')
+    })
+    form.parse(req)
+})
 
 // app.post('/api/auth',function(req,res){
 //     let users= [{username:'Al',birthdate:'1900/01/1',age:'3',email:'a', password:'s',valid:false}]

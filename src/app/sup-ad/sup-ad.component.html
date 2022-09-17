@@ -199,8 +199,12 @@
                     <button  type="button" class="btn btn-success" (click)="joinChat()">Join room</button><br>
 
                     <input type="text" #chatmsg style="width:40%" placeholder="M">
-                    <button type="button" class="btn btn-primary" (click)="sendMsg(chatmsg.value)">Send</button>
+                    <button type="button" class="btn btn-primary" (click)="sendMsg(chatmsg.value);chatmsg.value=''">Send</button>
                     <ul><p *ngFor="let i of chat_msg">{{i}}</p></ul>
+                    
+                    <button type="button" class="btn btn-primary" (click)="onUpload()">sbui</button>
+                    <div class="form-group"><input type="file" (change)="imgSelect($event)"></div>
+                    <img src="images/{{imgpath}}">
                 </div>
                 </div>
 

@@ -41,9 +41,24 @@ export class SupAdComponent implements OnInit {
   chat_grouplist:any
   chat_channel:any=[]
   chat_msg:any=[]
+  imgfile:any
+  imgpath=''
   constructor(private httpclient:HttpClient, private chats:ServiceService) { this.chats=chats}
-  chat_observer:any
-  chat_state:boolean=false
+
+  imgSelect(e:any){
+    console.log(e)
+    this.imgfile=e.target.files[0]
+  }
+
+  onUpload(){
+    const fd = new FormData()
+    fd.append('img',this.imgfile,this.imgfile.name)
+    this.httpclient.post('/api/img',fd).subscribe((res:any)=>{
+    this.imgpath=res.data.filename
+    console.log(res.data.filename+','+res.data.size)
+    })
+  }
+
   joinChat(){
     this.chat_msg=[]
 
@@ -52,10 +67,10 @@ export class SupAdComponent implements OnInit {
 
     this.chats.connectSocket()
     if(this.inp.join_group!=''&&this.inp.join_channel!=''){
-      this.chats.joinRoom(this.inp.join_group+'/'+this.inp.join_channel)
-      this.chat_observer=this.chats.recieveMsg().subscribe((m)=>{this.chat_msg.push(m)})
+      this.chats.joinRoom([this.inp.join_group+'/'+this.inp.join_channel,this.username])
+      this.chats.recieveMsg().subscribe((m)=>{this.chat_msg.push(m)})
       console.log('joined in : '+this.inp.join_group+'/'+this.inp.join_channel)
-      this.chat_state=true
+      this.chat_title=this.inp.join_group+'/'+this.inp.join_channel,this.username
     }
   }
 
@@ -263,6 +278,7 @@ export class SupAdComponent implements OnInit {
 
   logout(){
     localStorage.clear()
+    this.chats.disconnectSocket()
   }
   
   ngOnInit(): void {
