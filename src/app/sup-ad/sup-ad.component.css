@@ -10,6 +10,19 @@
  * Copyright 2011-2021 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
+
+ 
+.box {
+  width: 10%;
+  height: 10%; 
+  border-radius: 30%;
+  overflow: hidden;
+}
+.profile {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 :root {
   --bs-blue: #0d6efd;
   --bs-indigo: #6610f2;

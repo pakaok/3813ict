@@ -51,14 +51,16 @@ export class SupAdComponent implements OnInit {
     this.imgfile=e.target.files[0]
   }
   public getSantizeUrl(url:any) {
-    return this.domsanitizer.bypassSecurityTrustUrl(url);
+    if(url!=undefined){
+    this.domsanitizer.bypassSecurityTrustUrl(url);
+    }
   }
   onUpload(){
     const fd = new FormData()
     fd.append('img',this.imgfile,this.imgfile.name)
     this.httpclient.post(url+'/api/img',fd).subscribe((res:any)=>{
-    this.imgpath=res.data.filename
-
+    this.imgpath=url+'/image/'+res.data.filename
+    this.getSantizeUrl(this.imgpath)
     console.log(res.data.filename+','+res.data.size)
     console.log(res)
     })

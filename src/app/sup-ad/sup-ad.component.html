@@ -20,6 +20,7 @@
                     <a *ngIf="user_level>=3" class="list-group-item list-group-item-action list-group-item-light p-3" (click)="state=3">Group Admin</a>
                     <a *ngIf="user_level>=2"class="list-group-item list-group-item-action list-group-item-light p-3" (click)="state=2">Group Assistant</a>
                     <a *ngIf="user_level>=1" class="list-group-item list-group-item-action list-group-item-light p-3" (click)="state=1">Chat</a>
+                    <a *ngIf="user_level>=1" class="list-group-item list-group-item-action list-group-item-light p-3" (click)="state=0">Profile</a>
                 </div>
             </div>
             <!-- Page content wrapper-->
@@ -200,11 +201,22 @@
 
                     <input type="text" #chatmsg style="width:40%" placeholder="M">
                     <button type="button" class="btn btn-primary" (click)="sendMsg(chatmsg.value);chatmsg.value=''">Send</button>
-                    <ul><p *ngFor="let i of chat_msg">{{i}}</p></ul>
+                    <ul>
+                        <div *ngFor="let i of chat_msg">
+                        <div class="box">
+                        <img class="profile" [src]="imgpath" />
+                        </div>
+                        <p >{{i}}</p>
+                    </div>
+                    </ul>
                     
+                    
+                </div>
+                <div  *ngSwitchCase = "0">
                     <button type="button" class="btn btn-primary" (click)="onUpload()">sbui</button>
-                    <div class="form-group"><input type="file" (change)="imgSelect($event)"></div>
-                    <img src="image/{{imgpath}}" />
+                    <input type="file" (change)="imgSelect($event)">
+                    <div class="box">
+                    <img class="profile" [src]="imgpath" /></div>
                 </div>
                 </div>
 
