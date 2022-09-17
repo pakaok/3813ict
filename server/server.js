@@ -6,6 +6,7 @@ var http = require('http').Server(app)
 var bodyParser = require('body-parser')
 var formidable = require('formidable')
 const { from } = require('rxjs')
+const path = require('path')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
@@ -88,6 +89,12 @@ app.post('/db/rs',function(req,res){
 
 
 })
+app.use(express.static(path.join(__dirname,'../dist/assignment/')))
+app.use('/images',express.static(path.join(__dirname,'./img')))
+app.get('/image/:p',function(req,res){
+    console.log(req.params.p)
+    res.sendFile(__dirname+'/img/'+req.params.p);
+    })
 
 app.post('/api/img',function(req,res){
     var form = new formidable.IncomingForm({uploadDir:'./img'})
@@ -104,17 +111,17 @@ app.post('/api/img',function(req,res){
     })
 
     form.on('fileBegin',(name,file)=>{
-        file.path = form.uploadDir+'/'+file.name
+        file.filepath = form.uploadDir+'/'+file.originalFilename
     })
     
     form.on('file',(field,file)=>{
         res.send({
             result:'OK',
-            data:{'filename':file.name,'size':file.size},
+            data:{'filename':file.originalFilename,size:file.size},
             numberOfImages:1,
-            message:'Upload successful'
+            message:"ok"
         })
-        console.log('image Sent')
+        console.log(file.filepath)
     })
     form.parse(req)
 })

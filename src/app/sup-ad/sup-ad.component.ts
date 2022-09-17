@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ServiceService } from '../server-service/service.service';
 import {HttpClient,HttpHeaders} from '@angular/common/http'
+import { DomSanitizer } from '@angular/platform-browser';
 
 const httpoptions={
   headers : new HttpHeaders({'Content-Type':'application/json'})
@@ -42,20 +43,24 @@ export class SupAdComponent implements OnInit {
   chat_channel:any=[]
   chat_msg:any=[]
   imgfile:any
-  imgpath=''
-  constructor(private httpclient:HttpClient, private chats:ServiceService) { this.chats=chats}
+  imgpath:any
+  constructor(private httpclient:HttpClient, private chats:ServiceService, private domsanitizer:DomSanitizer) { this.chats=chats}
 
   imgSelect(e:any){
     console.log(e)
     this.imgfile=e.target.files[0]
   }
-
+  public getSantizeUrl(url:any) {
+    return this.domsanitizer.bypassSecurityTrustUrl(url);
+  }
   onUpload(){
     const fd = new FormData()
     fd.append('img',this.imgfile,this.imgfile.name)
-    this.httpclient.post('/api/img',fd).subscribe((res:any)=>{
+    this.httpclient.post(url+'/api/img',fd).subscribe((res:any)=>{
     this.imgpath=res.data.filename
+
     console.log(res.data.filename+','+res.data.size)
+    console.log(res)
     })
   }
 
