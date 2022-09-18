@@ -5,16 +5,53 @@ var fs = require('fs')
 var http = require('http').Server(app)
 var bodyParser = require('body-parser')
 var formidable = require('formidable')
-const { from } = require('rxjs')
 const path = require('path')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+const Mongoclient= require('mongodb').MongoClient
+const mongo=new Mongoclient(url)
+const url= 'mongodb://localhost:27017'
 
 const io = require('socket.io')(http,{
     cors: {
         origin: "http://localhost:4200",
         methods: ['GET','POST']
     }
+})
+
+mongo.connect((err)=>{
+    const db = mongo.db('3813ict')
+    user_db = db.collection('user')
+    groups_db=db.collection('groups')
+    grouplist_db=db.collection('grouplist')
+    history_db=db.collection('history')
+
+    app.post('/login',function(req,res){
+        let db = JSON.parse(fs.readFileSync('./db.json','utf8'))
+        console.log(db)
+        db.user.forEach(e => {
+            if(e[0]==req.body.id&&e[1]==req.body.pw){
+                res.send({valid:true,id:e[0],level:e[3]})
+            }
+        });
+    })
+    app.get('/db/rq',function(req,res){
+    
+        fs.readFile('./db.json','utf8',function(err,data){
+            res.send(data)
+            console.log('Data Sent')
+        })
+    
+    })
+    
+    app.post('/db/rs',function(req,res){
+           
+           
+            fs.writeFileSync('./db.json',JSON.stringify(req.body))
+            console.log("Data received")
+    
+    
+    })
 })
 
 app.use(cors())
@@ -64,32 +101,7 @@ io.on('connection',(socket)=>{
     })
 })
 
-app.post('/login',function(req,res){
-    let db = JSON.parse(fs.readFileSync('./db.json','utf8'))
-    console.log(db)
-    db.user.forEach(e => {
-        if(e[0]==req.body.id&&e[1]==req.body.pw){
-            res.send({valid:true,id:e[0],level:e[3]})
-        }
-    });
-})
-app.get('/db/rq',function(req,res){
 
-    fs.readFile('./db.json','utf8',function(err,data){
-        res.send(data)
-        console.log('Data Sent')
-    })
-
-})
-
-app.post('/db/rs',function(req,res){
-       
-       
-        fs.writeFileSync('./db.json',JSON.stringify(req.body))
-        console.log("Data received")
-
-
-})
 app.use(express.static(path.join(__dirname,'../dist/assignment/')))
 app.use('/images',express.static(path.join(__dirname,'./img')))
 app.get('/image/:p',function(req,res){
