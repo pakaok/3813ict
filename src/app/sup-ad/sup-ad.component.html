@@ -197,23 +197,26 @@
                         <option value="">=Group</option><br>
                         <option *ngFor="let i of chat_grouplist">{{i}}</option>
                     </select>&nbsp;
-                    <button  type="button" class="btn btn-success" (click)="joinChat()">Join room</button><br>
+                    <button  type="button" class="btn btn-success" (click)="joinChat()">Join room</button><br><br>
 
-                    <input type="text" #chatmsg style="width:40%" placeholder="M">
-                    <button type="button" class="btn btn-primary" (click)="sendMsg(chatmsg.value);chatmsg.value=''">Send</button>
-                    <ul>
+                    
+                    <input type="file" (change)="imgSelect($event); chat_send.img=true;onUpload(2)">
+                    <img style="width: 10%;height:10%" *ngIf="chat_send.img" [src]="chat_send.path"><br>
+                    <input type="text" #chatmsg style="width:40%" placeholder="M" [(ngModel)]="chat_send.msg" name="s">
+                    <button type="button" class="btn btn-primary" (click)="sendMsg();">Send</button>
+                    <div style="overflow:auto; height:300px" ><ul>
                         <div *ngFor="let i of chat_msg" style="margin-bottom: 2%;" >
                         <div class="box">
                         <img class="profile" [src]="imgpath"/>
-                        </div>&nbsp;{{username}}<li style="margin-top: 1%;">{{i}}</li>
+                        </div>&nbsp;{{username}}<br><li style="margin-top: 1%;"><img *ngIf="i.img" style="width: 10%;height:10%" [src]="i.path" >{{i.msg}}</li>
                         
-                    </div>
-                    </ul>
+                    </div></ul></div>
+                    
                     
                     
                 </div>
                 <div  *ngSwitchCase = "0">
-                    <button type="button" class="btn btn-primary" (click)="onUpload()">sbui</button>
+                    <button type="button" class="btn btn-primary" (click)="onUpload(1)">sbui</button>
                     <input type="file" (change)="imgSelect($event)">
                     <div class="box">
                     <img class="profile" [src]="imgpath" /></div>

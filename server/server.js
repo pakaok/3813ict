@@ -1,6 +1,5 @@
 var express = require('express')
 var app = express()
-exports.app = app
 var cors = require('cors')
 var fs = require('fs')
 var http = require('http').Server(app)
@@ -36,7 +35,7 @@ io.on('connection',(socket)=>{
             rooms.push([socket.id,roomName[0],roomName[1]])
         }
         socket.join(roomName[0])
-        io.to(roomName[0]).emit('msg','*** '+roomName[1]+': has joined ***')
+        io.to(roomName[0]).emit('msg',{msg:'*** '+roomName[1]+': has joined ***'})
         console.log(rooms)
     })
 
@@ -47,6 +46,7 @@ io.on('connection',(socket)=>{
             }
         }
         io.to(currentRoom).emit('msg',msg)
+        console.log(msg)
 
     })
 
@@ -57,7 +57,7 @@ io.on('connection',(socket)=>{
                 username=rooms[i][2]
                 socket.leave(leavingRoom)
                 rooms.splice(i, 1)
-                io.to(leavingRoom).emit('msg','*** '+username+ ': left room ***')
+                io.to(leavingRoom).emit('msg',{msg:'*** '+username+ ': left room ***'})
                 console.log('leavedisconnect')
             }
         }
@@ -92,6 +92,11 @@ app.post('/db/rs',function(req,res){
 })
 app.use(express.static(path.join(__dirname,'../dist/assignment/')))
 app.use('/images',express.static(path.join(__dirname,'./img')))
+app.get('/image/:p',function(req,res){
+    console.log(req.params.p)
+    res.sendFile(__dirname+'/img/'+req.params.p);
+    })
+
 app.post('/api/img',function(req,res){
     var form = new formidable.IncomingForm({uploadDir:'./img'})
     form.keepExtensions = true
@@ -117,7 +122,7 @@ app.post('/api/img',function(req,res){
             numberOfImages:1,
             message:"ok"
         })
-        console.log(file.filepath)
+        console.log('formidable image saved')
     })
     form.parse(req)
 })

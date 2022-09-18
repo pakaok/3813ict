@@ -42,6 +42,7 @@ export class SupAdComponent implements OnInit {
   chat_grouplist:any
   chat_channel:any=[]
   chat_msg:any=[]
+  chat_send:any={msg:'',path:'',img:false}
   imgfile:any
   imgpath:any
   constructor(private httpclient:HttpClient, private chats:ServiceService, private domsanitizer:DomSanitizer) { this.chats=chats}
@@ -55,15 +56,21 @@ export class SupAdComponent implements OnInit {
     this.domsanitizer.bypassSecurityTrustUrl(url);
     }
   }
-  onUpload(){
+  onUpload(x:number){
     const fd = new FormData()
-    fd.append('img',this.imgfile,this.imgfile.name)
+    if(x==1){
+      fd.append('img',this.imgfile,this.imgfile.name)
     this.httpclient.post(url+'/api/img',fd).subscribe((res:any)=>{
     this.imgpath=url+'/image/'+res.data.filename
     this.getSantizeUrl(this.imgpath)
-    console.log(res.data.filename+','+res.data.size)
-    console.log(res)
     })
+    }else if(x==2&&this.chat_send.img){
+      fd.append('img',this.imgfile,this.imgfile.name)
+    this.httpclient.post(url+'/api/img',fd).subscribe((res:any)=>{
+    this.chat_send.path=url+'/image/'+res.data.filename
+    this.getSantizeUrl(this.chat_send.path)
+    })
+    }
   }
 
   joinChat(){
@@ -81,8 +88,10 @@ export class SupAdComponent implements OnInit {
     }
   }
 
-  sendMsg(x:string){
-    this.chats.sendMsg(x)
+  sendMsg(){
+    this.chats.sendMsg(this.chat_send)
+    this.chat_send={msg:'',path:'',img:false}
+    console.log(this.chat_msg)
   }
 
   Assign_bysuper(x:number){

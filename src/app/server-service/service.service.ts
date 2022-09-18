@@ -23,7 +23,7 @@ export class ServiceService {
   imgUpload(fd:any){
    this.httpclient.post<any>('api/img',fd).subscribe(observ=>{observ.next()})
   }
-  sendMsg(x:string){
+  sendMsg(x:any){
     this.socket.emit('msg',x)
 
   }
