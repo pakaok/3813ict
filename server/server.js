@@ -1,5 +1,6 @@
 var express = require('express')
 var app = express()
+exports.app = app
 var cors = require('cors')
 var fs = require('fs')
 var http = require('http').Server(app)
@@ -91,11 +92,6 @@ app.post('/db/rs',function(req,res){
 })
 app.use(express.static(path.join(__dirname,'../dist/assignment/')))
 app.use('/images',express.static(path.join(__dirname,'./img')))
-app.get('/image/:p',function(req,res){
-    console.log(req.params.p)
-    res.sendFile(__dirname+'/img/'+req.params.p);
-    })
-
 app.post('/api/img',function(req,res){
     var form = new formidable.IncomingForm({uploadDir:'./img'})
     form.keepExtensions = true

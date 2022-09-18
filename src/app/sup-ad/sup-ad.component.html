@@ -202,11 +202,11 @@
                     <input type="text" #chatmsg style="width:40%" placeholder="M">
                     <button type="button" class="btn btn-primary" (click)="sendMsg(chatmsg.value);chatmsg.value=''">Send</button>
                     <ul>
-                        <div *ngFor="let i of chat_msg">
+                        <div *ngFor="let i of chat_msg" style="margin-bottom: 2%;" >
                         <div class="box">
-                        <img class="profile" [src]="imgpath" />
-                        </div>
-                        <p >{{i}}</p>
+                        <img class="profile" [src]="imgpath"/>
+                        </div>&nbsp;{{username}}<li style="margin-top: 1%;">{{i}}</li>
+                        
                     </div>
                     </ul>
                     
