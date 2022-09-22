@@ -9,8 +9,9 @@ const path = require('path')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 const Mongoclient= require('mongodb').MongoClient
-const mongo=new Mongoclient(url)
 const url= 'mongodb://localhost:27017'
+const mongo=new Mongoclient(url)
+
 
 const io = require('socket.io')(http,{
     cors: {
@@ -20,7 +21,7 @@ const io = require('socket.io')(http,{
 })
 
 mongo.connect((err)=>{
-    const db = mongo.db('3813ict')
+    const db = mongo.db('dbs')
     user_db = db.collection('user')
     groups_db=db.collection('groups')
     grouplist_db=db.collection('grouplist')
@@ -37,11 +38,11 @@ mongo.connect((err)=>{
     })
     app.get('/db/rq',function(req,res){
     
-        fs.readFile('./db.json','utf8',function(err,data){
-            res.send(data)
-            console.log('Data Sent')
-        })
-    
+        // fs.readFile('./db.json','utf8',function(err,data){
+        //     res.send(data)
+        //     console.log('Data Sent')
+        // })
+        
     })
     
     app.post('/db/rs',function(req,res){
@@ -139,59 +140,3 @@ app.post('/api/img',function(req,res){
     form.parse(req)
 })
 
-// app.post('/api/auth',function(req,res){
-//     let users= [{username:'Al',birthdate:'1900/01/1',age:'3',email:'a', password:'s',valid:false}]
-
-//     if (!req.body){
-//         return res.sendStatus(400)
-//     }
-
-//     var customer = {}
-//     customer.email=req.body.email
-//     customer.password=req.body.password
-//     customer.valid = false
-//     console.log(customer)
-//     find =  users.some(e => (e.email==customer.email&&e.password==customer.password))
-    
-//         if (find){
-//             users.forEach(e=>{
-//                 if (e.email==customer.email&&e.password==customer.password){
-//                 customer = e
-//                 customer.valid = true
-//             }
-//         })
-//         }
-
-
-
-// var server = http.listen(3000,function(){
-//     console.log('server listening')
-// })
-
-// app.post('/api/auth',function(req,res){
-//     let users= [{username:'Al',birthdate:'1900/01/1',age:'3',email:'a', password:'s',valid:false}]
-
-//     if (!req.body){
-//         return res.sendStatus(400)
-//     }
-
-//     var customer = {}
-//     customer.email=req.body.email
-//     customer.password=req.body.password
-//     customer.valid = false
-//     console.log(customer)
-//     find =  users.some(e => (e.email==customer.email&&e.password==customer.password))
-    
-//         if (find){
-//             users.forEach(e=>{
-//                 if (e.email==customer.email&&e.password==customer.password){
-//                 customer = e
-//                 customer.valid = true
-//             }
-//         })
-//         }
-    
-    
-//     res.send(customer)
-
-// })
