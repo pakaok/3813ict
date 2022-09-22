@@ -11,6 +11,7 @@ app.use(bodyParser.json())
 const Mongoclient= require('mongodb').MongoClient
 const url= 'mongodb://localhost:27017'
 const mongo=new Mongoclient(url)
+front_db={};
 
 
 const io = require('socket.io')(http,{
@@ -26,33 +27,60 @@ mongo.connect((err)=>{
     groups_db=db.collection('groups')
     grouplist_db=db.collection('grouplist')
     history_db=db.collection('history')
+    userimage_db=db.collection('userimage')
 
-    app.post('/login',function(req,res){
-        let db = JSON.parse(fs.readFileSync('./db.json','utf8'))
-        console.log(db)
-        db.user.forEach(e => {
+    app.post('/login',async function(req,res){
+        let login_info = await user_db.findOne({})
+        console.log(login_info)
+        login_info.info.forEach(e => {
             if(e[0]==req.body.id&&e[1]==req.body.pw){
                 res.send({valid:true,id:e[0],level:e[3]})
             }
         });
     })
-    app.get('/db/rq',function(req,res){
-    
-        // fs.readFile('./db.json','utf8',function(err,data){
-        //     res.send(data)
-        //     console.log('Data Sent')
-        // })
-        
+    app.get('/db/rq',async function(req,res){
+        g = await groups_db.findOne({})
+        front_db.groups = g.info
+        gl= await grouplist_db.findOne({})
+        front_db.grouplist=gl.info
+        us= await user_db.findOne({})
+        front_db.user=us.info
+        img = await userimage_db.findOne({})
+        front_db.userimage=img.info
+        res.send(front_db)
+        console.log('Data Sent')
     })
     
-    app.post('/db/rs',function(req,res){
-           
-           
-            fs.writeFileSync('./db.json',JSON.stringify(req.body))
-            console.log("Data received")
-    
-    
+    app.post('/db/rs',async function(req,res){
+           user_db.updateOne({_id:'user'},{$set:{info:req.body.user}}).then(
+            grouplist_db.updateOne({_id:'grouplist'},{$set:{info:req.body.grouplist}}).then(
+                groups_db.updateOne({_id:'groups'},{$set:{info:req.body.groups}}).then(
+                    userimage_db.updateOne({_id:'userimage'},{$set:{info:req.body.userimage}}.then(
+                        console.log('Data Recieved')
+                    )))
+            ) 
+           )
     })
+
+    app.post('/db/rs/history',async function(req,res){
+        let history = await history_db.findOne({_id:req.body._id})
+        if (history!=null){
+            history_db.updateOne({_id:req.body._id},{$set:{info:req.body.info}}).then(
+                console.log('update chat'))
+        }else if (history==null){
+            history_db.insertOne({_id:req.body._id,info:{info:req.body.info}},(err,result)=>{
+                console.log('insert chat')
+            })
+        }
+    })
+
+    app.post('/db/rq/history',async function(req,res){
+        let history = await history_db.findOne({_id:req.body._id})
+        res.send(history)
+        console.log('history requested')
+        console.log(history)
+    })
+
 })
 
 app.use(cors())
@@ -73,7 +101,7 @@ io.on('connection',(socket)=>{
             rooms.push([socket.id,roomName[0],roomName[1]])
         }
         socket.join(roomName[0])
-        io.to(roomName[0]).emit('msg',{msg:'*** '+roomName[1]+': has joined ***'})
+        io.to(roomName[0]).emit('msg',{msg:'*** '+roomName[1]+': has joined ***',username:'system'})
         console.log(rooms)
     })
 
@@ -95,7 +123,7 @@ io.on('connection',(socket)=>{
                 username=rooms[i][2]
                 socket.leave(leavingRoom)
                 rooms.splice(i, 1)
-                io.to(leavingRoom).emit('msg',{msg:'*** '+username+ ': left room ***'})
+                io.to(leavingRoom).emit('msg',{msg:'*** '+username+ ': left room ***',username:'system'})
                 console.log('leavedisconnect')
             }
         }
@@ -109,7 +137,6 @@ app.get('/image/:p',function(req,res){
     console.log(req.params.p)
     res.sendFile(__dirname+'/img/'+req.params.p);
     })
-
 app.post('/api/img',function(req,res){
     var form = new formidable.IncomingForm({uploadDir:'./img'})
     form.keepExtensions = true

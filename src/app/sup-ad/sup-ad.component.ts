@@ -42,7 +42,7 @@ export class SupAdComponent implements OnInit {
   chat_grouplist:any
   chat_channel:any=[]
   chat_msg:any=[]
-  chat_send:any={msg:'',path:'',img:false}
+  chat_send:any={msg:'',path:'',img:false, username:this.username}
   imgfile:any
   imgpath:any
   constructor(private httpclient:HttpClient, private chats:ServiceService, private domsanitizer:DomSanitizer) { this.chats=chats}
@@ -63,6 +63,8 @@ export class SupAdComponent implements OnInit {
     this.httpclient.post(url+'/api/img',fd).subscribe((res:any)=>{
     this.imgpath=url+'/image/'+res.data.filename
     this.getSantizeUrl(this.imgpath)
+    this.db.userimage[this.username]=this.imgpath
+    console.log(this.db)
     })
     }else if(x==2&&this.chat_send.img){
       fd.append('img',this.imgfile,this.imgfile.name)
@@ -73,24 +75,33 @@ export class SupAdComponent implements OnInit {
     }
   }
 
-  joinChat(){
+  async joinChat(){
     this.chat_msg=[]
-
-   //  this.chats.leaveRoom(this.username)
     this.chats.disconnectSocket()
 
     this.chats.connectSocket()
     if(this.inp.join_group!=''&&this.inp.join_channel!=''){
+      let title=this.inp.join_group+'/'+this.inp.join_channel
+      this.httpclient.post(url+'/db/rq/history',{_id:title},httpoptions).subscribe((data:any)=>{
+        if(data&&data.info){this.chat_msg = data.info}
+      })
       this.chats.joinRoom([this.inp.join_group+'/'+this.inp.join_channel,this.username])
-      this.chats.recieveMsg().subscribe((m)=>{this.chat_msg.push(m)})
+
+      
+
+      this.chats.recieveMsg().subscribe((m)=>{
+        this.chat_msg.push(m)
+        this.httpclient.post(url+'/db/rs/history',{_id:title,info:this.chat_msg}).subscribe()
+      })
       console.log('joined in : '+this.inp.join_group+'/'+this.inp.join_channel)
       this.chat_title=this.inp.join_group+'/'+this.inp.join_channel,this.username
     }
   }
 
   sendMsg(){
+    this.chat_send.username = this.username
     this.chats.sendMsg(this.chat_send)
-    this.chat_send={msg:'',path:'',img:false}
+    this.chat_send={msg:'',path:'',img:false,username:this.username}
     console.log(this.chat_msg)
   }
 
