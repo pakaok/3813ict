@@ -55,11 +55,11 @@ mongo.connect((err)=>{
            user_db.updateOne({_id:'user'},{$set:{info:req.body.user}}).then(
             grouplist_db.updateOne({_id:'grouplist'},{$set:{info:req.body.grouplist}}).then(
                 groups_db.updateOne({_id:'groups'},{$set:{info:req.body.groups}}).then(
-                    userimage_db.updateOne({_id:'userimage'},{$set:{info:req.body.userimage}}.then(
+                    userimage_db.updateOne({_id:'userimage'},{$set:{info:req.body.userimage}}).then(
                         console.log('Data Recieved')
                     )))
             ) 
-           )
+           
     })
 
     app.post('/db/rs/history',async function(req,res){
@@ -68,7 +68,7 @@ mongo.connect((err)=>{
             history_db.updateOne({_id:req.body._id},{$set:{info:req.body.info}}).then(
                 console.log('update chat'))
         }else if (history==null){
-            history_db.insertOne({_id:req.body._id,info:{info:req.body.info}},(err,result)=>{
+            history_db.insertOne({_id:req.body._id,info:req.body.info},(err,result)=>{
                 console.log('insert chat')
             })
         }

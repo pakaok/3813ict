@@ -65,6 +65,7 @@ export class SupAdComponent implements OnInit {
     this.getSantizeUrl(this.imgpath)
     this.db.userimage[this.username]=this.imgpath
     console.log(this.db)
+    this.dbSend()
     })
     }else if(x==2&&this.chat_send.img){
       fd.append('img',this.imgfile,this.imgfile.name)
@@ -92,7 +93,7 @@ export class SupAdComponent implements OnInit {
       this.chats.recieveMsg().subscribe((m)=>{
         this.chat_msg.push(m)
         this.httpclient.post(url+'/db/rs/history',{_id:title,info:this.chat_msg}).subscribe()
-      })
+      })//store data when recieving msg
       console.log('joined in : '+this.inp.join_group+'/'+this.inp.join_channel)
       this.chat_title=this.inp.join_group+'/'+this.inp.join_channel,this.username
     }
@@ -307,16 +308,21 @@ export class SupAdComponent implements OnInit {
     localStorage.clear()
     this.chats.disconnectSocket()
   }
-  
+  // async dbRequest(){
+  //   await this.httpclient.get(url+'/db/rq').subscribe((db:any)=>{
+  //     this.db=db
+  //     //localStorage.setItem('db',JSON.stringify(db))
+  //   })
+  // }
   ngOnInit(): void {
     // this.dbRequest()
     this.user_level=localStorage.getItem('level')
     this.username=localStorage.getItem('id')
     let x:any=localStorage.getItem('db')
     this.db=JSON.parse(x)
-    
+    // this.dbRequest()
+    this.getSantizeUrl('http://localhost:3000/image/system.png')
    setTimeout(() => {
-    console.log(this.db)
     if(this.user_level==2){
       for (let i = 0; i < this.db.user.length; i++) {
         if (this.db.user[i][0]==this.username){
@@ -337,7 +343,6 @@ export class SupAdComponent implements OnInit {
   channel_show(x:string){
     this.chat_channel=[]
     this.chat_channel=this.chat_group[x]
-
   }
   group_showontop(){
     this.chat_group={}
@@ -358,11 +363,12 @@ export class SupAdComponent implements OnInit {
           for (let i2 = 0; i2 < group.length; i2++) {
             if(this.db.user[i][5].indexOf(group[i2])!=-1){
               this.user_groupshow.push(group[i2]+' : Assistant')
-              this.chat_group[group[i2]].push(this.db.groups[group[i2]])
+              this.chat_group[group[i2]]=this.db.groups[group[i2]]
             }else{
               this.user_groupshow.push(group[i2]+' : '+JSON.stringify(this.db.user[i][4][group[i2]])
               .replace('[','').replace(']','').replace(/"/g,''))
-              this.chat_group[group[i2]].push(this.db.user[i][4][group[i2]])
+              
+              this.chat_group[group[i2]]=this.db.user[i][4][group[i2]]
             }
             
           }
@@ -371,10 +377,10 @@ export class SupAdComponent implements OnInit {
       }
     }
     this.chat_grouplist=Object.keys(this.chat_group)
-    console.log(this.chat_grouplist)
+    console.log('Available chat rooms: '+this.chat_grouplist)
   }
 }
-
+// http://localhost:3000/image/system.png
 // else if(this.user_level==1){
 //   for (let i = 0; i < this.db.user.length; i++) {
 //     if(this.db.user[i][0]==this.username){
