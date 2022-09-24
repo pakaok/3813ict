@@ -335,6 +335,7 @@ export class SupAdComponent implements OnInit {
     if(this.user_level==3){this.level='Group Admin'}
     if(this.user_level==4){this.level='Super Admin'}
     this.group_showontop()
+    console.log(this.db)
    }, 500);
 
   }

@@ -31,7 +31,7 @@ mongo.connect((err)=>{
 
     app.post('/login',async function(req,res){
         let login_info = await user_db.findOne({})
-        console.log(login_info)
+        //console.log(login_info)
         login_info.info.forEach(e => {
             if(e[0]==req.body.id&&e[1]==req.body.pw){
                 res.send({valid:true,id:e[0],level:e[3]})
@@ -78,7 +78,7 @@ mongo.connect((err)=>{
         let history = await history_db.findOne({_id:req.body._id})
         res.send(history)
         console.log('history requested')
-        console.log(history)
+        //console.log(history)
     })
 
 })
@@ -167,3 +167,4 @@ app.post('/api/img',function(req,res){
     form.parse(req)
 })
 
+module.exports = app
