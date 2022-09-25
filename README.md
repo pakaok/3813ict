@@ -1,4 +1,4 @@
-# 3813ict_Assignment
+﻿# 3813ict_Assignment
 https://github.com/pakaok/3813ict
 
 **s5228571 Jaeseok Kim**
@@ -11,28 +11,25 @@ As this is an individual tasks(assignment), I have used only **main** branch in 
 
 # Data Structures
 
-{
-**"*user*":[
-["super","superemail","Super",4],["gadmin1","gademail","GroupAdmin",3],["user1","user1email","User",2,{"g1":["1"],"g2":["1"]},[]],["gassis1","gassisemail","GroupAssis",2,{"g1":["1"],"g2":[]},["g1"]]
-],**
-**"*groups*":{"g1":["1","2"],"g2":["1","2"]}**,
-**"*grouplist*":["g1","g2"]**
-}
+MongoDB
+collections: user, groups, grouplist, userimage, history
+
+---
 
 
-> ***user***
-
-represents all users which contain Super admin,
-
-Group admin, Group Assistant, and standard user. Each array within ***user*** reperents as follows:
-
+> Collection: User
+> 
+> _id : user, {info:
  1. **[** Username,  
  2. Useremail,  
  3. ID,  
  4. Role,  
  5. {Group that user belongs to: Channel that user belongs to}, 
  6. [Group that user has been assigned as Group Assistant] **]**
+}
 
+represents all users which contain Super admin,
+Group admin, Group Assistant, and standard user. 
 
 Super and Group admin have **no** 5 and 6 as those are able to **access all channels and groups** because of Authorisation to create them.
 
@@ -40,61 +37,148 @@ Super and Group admin have **no** 5 and 6 as those are able to **access all chan
 
 Username and Email are used as ID and PW in Login Page for user authentication.
 
+---
 
+> Collection : group
+> 
+> _id: groups , info :{"g1":["1","2"],"g2":["1","2"]}
 
-> "*groups*":{"g1":["1","2"],"g2":["1","2"]}
+In this collection, each key represents group and each value as Array represents channels that belong to each group, within database.
 
-In this object, each key represents group and each value as Array represents channels that belong to each group, within database.
+---
 
-
-
-> grouplist*":["g1","g2"]
+> Collection : grouplist
+> _id: grouplist, info: ["g1","g2"]
 
 This grouplist represents all groups within database.
 
+---
+> Collection: Userimage
+> _id: userimage, info:{ {system:"localhost:3000/image/system.png"} }
 
+This collection represents userimage used in chats or profile. Image url is in object which would be called by backend side.
+
+---
+> Collection: history
+> _id: chat_room_name, info: { msg: '', img: false, username: '', path: ''}
+
+This collections is used to store each chat history. **msg** represents message, **img** represents whether image file has been contained in message, and **path** represents where image file is located (only used when **img** is **true**)
 
 
 
 ## Rest API
 
-Three of routes have been used, which are **/login**,  **/db/rs**,  and **/db/rq**. 
+Three of routes have been used, which are as follows:
 
+ - **/login**
+ -  **/db/rs**
+ - **/db/rq**
+ - **/db/rq/history**
+ - **/db/rs/history**
+ - **/image/:p**
+ - **/api/img**
+----
+Variables
+
+    const  db = mongo.db('dbs')
+    user_db = db.collection('user')
+    groups_db=db.collection('groups')
+    grouplist_db=db.collection('grouplist')
+    history_db=db.collection('history')
+    userimage_db=db.collection('userimage')
+----
 
 
 > **/login**
-> 
-    app.post('/login',function(req,res){
-    let  db = JSON.parse(fs.readFileSync('./db.json','utf8'))
-    console.log(db)
-    db.user.forEach(e  => {
+
+    app.post('/login',async  function(req,res){
+    let  login_info = await  user_db.findOne({})
+    login_info.info.forEach(e  => {
     if(e[0]==req.body.id&&e[1]==req.body.pw){
     res.send({valid:true,id:e[0],level:e[3]})
-    }})})
+    }});})
+
 Description: 
-req represents request from client side and res represents response from server side. Once server recieved request from client with data, it will call JSON file from './db.json' and compare data from client side to data from JSON file. If there is any same data in both of client and server, then server will send an object which consists of valid:true, user id, user level(role).
+req represents request from client side and res represents response from server side. Once server recieved request from client with data, it will call object from mongoDB and compare data from client side to data from mongoDB. If there is any same data in both of client and server, then server will send an object which consists of valid:true, user id, user level(role).
 This route is used for user authentication (Login)
 
+---
 >**/db/rq**
 
-    app.get('/db/rq',function(req,res){
-    fs.readFile('./db.json','utf8',function(err,data){
-    res.send(data)
+    app.get('/db/rq',async  function(req,res){
+    g = await  groups_db.findOne({})
+    front_db.groups = g.info
+    gl= await  grouplist_db.findOne({})
+    front_db.grouplist=gl.info
+    us= await  user_db.findOne({})
+    front_db.user=us.info
+    img = await  userimage_db.findOne({})
+    front_db.userimage=img.info
+    res.send(front_db)
     console.log('Data Sent')
-    })})
+    })
+
 Description: 
-If server recieved request from client, it will send JSON file to client
+If server recieved request from client, it will send object file to client after combining into one object file named "front_db".
 This is used for client to get database after user authentication.
 
+---
 >**/db/rs**
 
-    app.post('/db/rs',function(req,res){
-    fs.writeFileSync('./db.json',JSON.stringify(req.body))
-    console.log("Data received")
+    app.post('/db/rs',async  function(req,res){
+     user_db.updateOne({_id:'user'},{$set:{info:req.body.user}}).then(
+      grouplist_db.updateOne({_id:'grouplist'},$set:info:req.body.grouplist}}).then(
+       groups_db.updateOne({_id:'groups'},{$set:{info:req.body.groups}}).then(
+    userimage_db.updateOne({_id:'userimage'},{$set:{info:req.body.userimage}}).then(
+    console.log('Data Recieved')
+    ))))})
+
+Description:
+if server recieved request from client with data, server will store(write) data into corresponding collections after breaking it down into individual documents.
+This is used to store database.
+
+---
+
+> **/db/rs/history**
+
+    app.post('/db/rs/history',async  function(req,res){
+    let  history = await  history_db.findOne({_id:req.body._id})
+    if (history!=null){
+    history_db.updateOne({_id:req.body._id},{$set:{info:req.body.info}}).then(
+    console.log('update chat'))
+    }else  if (history==null){
+    history_db.insertOne({_id:req.body._id,info:req.body.info},(err,result)=>{
+    console.log('insert chat')
+    })}})
+
+Description:
+ If there is any updated chat, then it will be stored via this route. If it is already exists, then updated, if not, inserted as new document.
+
+---
+
+> **/db/rq/history**
+
+    app.post('/db/rq/history',async  function(req,res){
+    let  history = await  history_db.findOne({_id:req.body._id})
+    res.send(history)
+    console.log('history requested')
+    })
+
+Description:
+if client joined any room for chat, server will send corresponding chat history into client via this route.
+
+---
+
+> **/image/:p**
+
+    app.get('/image/:p',function(req,res){
+    console.log(req.params.p)
+    res.sendFile(__dirname+'/img/'+req.params.p);
     })
 Description:
-if server recieved request from client with data, server will store(write) data into './db.json' after converting it to string.
-This is used to store database.
+If client request any image for profile setting or image chat, then this route would be used to send requested one
+
+---
 ## Angular Architecture
 
  - app component 
@@ -103,7 +187,7 @@ This is used to store database.
  - server-service service
 
 When Angular serves, it directs to app component. However, as User Login is necessary, it has been modified to directs to login component right after directing to app component. Therefore, there is no action in app component except for routing to login component. In login component, when user authenticated, it directs to sup-ad component. In sup-ad component, there are different content views, which user can see, based on user role. Unless user logs out, whenever restarting Angular page, Angular will directs user to sup-ad component because user's information is stored in local storage.
-Service has not been used in Phase 1 although it exists.
+Service has been used for socket.io. Every functions relevant to socket.io will be called via service.
 ## Rename a file
 
 You can rename the current file by clicking the file name in the navigation bar or by clicking the **Rename** button in the file explorer.
