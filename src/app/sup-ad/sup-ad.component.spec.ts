@@ -20,4 +20,9 @@ describe('SupAdComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should have username',()=>{
+    component.username='super'
+    expect(component.username).toEqual('super')
+  })
 });
