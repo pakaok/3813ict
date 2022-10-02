@@ -59,7 +59,6 @@ mongo.connect((err)=>{
                         console.log('Data Recieved')
                     )))
             ) 
-           
     })
 
     app.post('/db/rs/history',async function(req,res){
@@ -125,9 +124,41 @@ io.on('connection',(socket)=>{
                 rooms.splice(i, 1)
                 io.to(leavingRoom).emit('msg',{msg:'*** '+username+ ': left room ***',username:'system'})
                 console.log('leavedisconnect')
+                console.log(rooms)
             }
         }
     })
+
+    app.post('/api/img',function(req,res){
+    var form = new formidable.IncomingForm({uploadDir:'./img'})
+    form.keepExtensions = true
+    console.log('apiimg connect')
+    form.on('error',function(err){
+        res.send({
+            result:'failed',
+            data:{},
+            numberOfImages:0,
+            message:"Cannot upload images. Error is : "+ err
+        })
+        throw err
+    })
+
+    form.on('fileBegin',(name,file)=>{
+        file.filepath = form.uploadDir+'/'+file.originalFilename
+    })
+    
+    form.on('file',(field,file)=>{
+        res.send({
+            result:'OK',
+            data:{'filename':file.originalFilename,size:file.size},
+            numberOfImages:1,
+            message:"ok"
+        })
+        console.log('formidable image saved')
+    })
+    form.parse(req)
+})
+
 })
 
 
