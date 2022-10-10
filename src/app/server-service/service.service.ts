@@ -15,22 +15,22 @@ export class ServiceService {
   socket:any
   constructor(private httpclient:HttpClient ) {this.socket=io(url) }
   
-  joinRoom(x:any){
+  joinRoom(x:any){//join room
     this.socket.removeListener()
     this.socket.emit('join',x)
 
   }
-  imgUpload(fd:any){
+  imgUpload(fd:any){//upload image
    this.httpclient.post<any>('api/img',fd).subscribe(observ=>{observ.next()})
   }
-  sendMsg(x:any){
+  sendMsg(x:any){//send message
     this.socket.emit('msg',x)
 
   }
-  connectSocket(){
+  connectSocket(){//connect socket
     this.socket=io(url)
   }
-  recieveMsg(){
+  recieveMsg(){//receive message
     let observ= new Observable((observer)=>{
       this.socket.on('msg',(msg:any)=>{
         observer.next(msg)
@@ -39,11 +39,11 @@ export class ServiceService {
     })  
     return observ
   }
-  disconnectSocket(){
+  disconnectSocket(){//disconnect socket
     this.socket.disconnect()
   }
 
-  leaveRoom(x:string){
+  leaveRoom(x:string){//leave room
     this.socket.emit('leave',x)
     
   }

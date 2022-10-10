@@ -6,6 +6,7 @@ var http = require('http').Server(app)
 var bodyParser = require('body-parser')
 var formidable = require('formidable')
 const path = require('path')
+const { createFalse } = require('typescript')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 const Mongoclient= require('mongodb').MongoClient
@@ -32,11 +33,14 @@ mongo.connect((err)=>{
     app.post('/login',async function(req,res){
         let login_info = await user_db.findOne({})
         //console.log(login_info)
+        let v = false
         login_info.info.forEach(e => {
             if(e[0]==req.body.id&&e[1]==req.body.pw){
+                v=true
                 res.send({valid:true,id:e[0],level:e[3]})
             }
         });
+        if(!v){res.send({valid:false})}
     })
     app.get('/db/rq',async function(req,res){
         g = await groups_db.findOne({})
@@ -93,6 +97,8 @@ http.listen(3000,()=>{
 rooms=[['id','roomName','username']]
 
 io.on('connection',(socket)=>{
+
+
     socket.on('join',(roomName)=>{
         find=rooms.some((v)=>{return v[0]==socket.id&&v[1]==roomName[0]})
         console.log('o')

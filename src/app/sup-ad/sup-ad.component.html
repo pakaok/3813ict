@@ -40,6 +40,7 @@
                 </nav>
                 <!-- Page content-->
                 <div class="container-fluid" [ngSwitch]="state">
+                    <!--super admin page -->
                     <div *ngSwitchCase = "4">
                         <h2>Super Admin Page</h2><br>
                         <label for="A_gr">User</label> : 
@@ -53,7 +54,7 @@
                           <button type="button" class="btn btn-danger" (click)="Assign_bysuper(5)">Remove User</button>
                         </div></div>
 
-
+                    <!-- group admin page-->
                     <div  *ngSwitchCase = "3">
                         <h2>Group Admin Page</h2><br><br>
                         <label for="C_g">Create Group</label> : 
@@ -69,14 +70,8 @@
                             <option *ngFor="let group of db.grouplist">{{group}}</option>
                         </select>&nbsp;
                         <button type="button" class="btn btn-primary" (click)="createCh(cgr.value,cn.value)">Create</button>
-            
-                        <!-- <button type="button" class="btn btn-primary">Create</button><br>
-                        <label for="C_u">Create User</label> : 
-                        <input type="text" name="C_u" placeholder="User name">&nbsp;
-                        <button type="button" class="btn btn-primary">Create</button>
-                        <br><br> -->
-                        <br><br>
 
+                        <br><br>
                         <label for="I_u">User Invitation</label> : 
                         <input type="text" [(ngModel)]="inp.user_inv.new" name="C_u" placeholder="Username/Email/ID">&nbsp;
                         <select [(ngModel)]="inp.user_inv.u">
@@ -144,6 +139,7 @@
                        
                     </div>
 
+                    <!-- group assistant page-->
                     <div  *ngSwitchCase = "2">
                         <label for="Assis-1">User Add to Channel</label> : 
                         <select #au1>
@@ -187,6 +183,8 @@
                         <button type="button" class="btn btn-primary" (click)="createCh(acg.value,acc.value)">Create</button>
                     
                 </div>
+
+                <!--chat page -->
                 <div  *ngSwitchCase = "1">
                     <h1>Welcome to {{chat_title}}</h1><br>
                     <select [(ngModel)]="inp.join_channel">
@@ -215,6 +213,8 @@
                     
                     
                 </div>
+
+                <!-- profile setting page-->
                 <div  *ngSwitchCase = "0">
                     <button type="button" class="btn btn-primary" (click)="onUpload(1)">Set as profile image</button>
                     <input type="file" (change)="imgSelect($event)">
