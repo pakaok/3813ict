@@ -8,6 +8,7 @@ https://github.com/pakaok/3813ict
 
 As this is an individual tasks(assignment), I have used only **main** branch in repository named **3813ict** of github. Its updated when every functions or html components defined. However, there are several updates in one commit as Angular keep using cmd because of "ng serve", which means I cannot often do git commit.
 
+All commits were done when I have functions or meaningful implementation including installation of node modules. functions or implementation in progress were not committed.
 
 # Data Structures
 
@@ -188,6 +189,21 @@ If client request any image for profile setting or image chat, then this route w
 
 When Angular serves, it directs to app component. However, as User Login is necessary, it has been modified to directs to login component right after directing to app component. Therefore, there is no action in app component except for routing to login component. In login component, when user authenticated, it directs to sup-ad component. In sup-ad component, there are different content views, which user can see, based on user role. Unless user logs out, whenever restarting Angular page, Angular will directs user to sup-ad component because user's information is stored in local storage.
 Service has been used for socket.io. Every functions relevant to socket.io will be called via service.
-## Rename a file
 
-You can rename the current file by clicking the file name in the navigation bar or by clicking the **Rename** button in the file explorer.
+In Sup-ad component, ngSwitch is used to navigate to other sections. There are 5 cases of ngSwitch.
+1. In case of 4, it is used for displaying components which **super admin** can only use, which is assignment to group admin or removing users.
+2. In case of 3, it is used for displaying components which **group admin or the equivalent user** can only use, which is as follows: 
+    - Create group
+    - Create channel
+    - Create user
+    - Manage User in group
+    - Assign user as group assistant
+3. In case of 2, it is used for displaying components which **group assistant or the equivalent user** can only use, such as management of standard users in given groups 
+4. In case of 1, it is used for chat function. User can select group and channel according to its role. Once joined chats by selecting channel and group, corresponding chat history will be displayed.
+5. In case of 0, it is used for profile image setting. Users can set up their profile image in this section, which will be used as identifier in chat section.
+---
+## Unit test 
+
+1. Open the command prompt
+2. Go to server folder
+3. **npm test**
